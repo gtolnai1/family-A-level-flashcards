@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>B2 Family Flashcards | A-Level Matura</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f0fdf4 0%, #dbeafe 100%);
+            min-height: 100vh;
+        }
+        
+        .perspective-1000 {
+            perspective: 1000px;
+        }
+        
+        .transform-style-3d {
+            transform-style: preserve-3d;
+        }
+        
+        .backface-hidden {
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+        }
+        
+        .rotate-y-180 {
+            transform: rotateY(180deg);
+        }
+        
+        /* Smooth transition for the flip */
+        .card-inner {
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+        }
+
+        /* Prevent text selection when clicking quickly */
+        .no-select {
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        
+        /* Hide scrollbar for clean look if text gets too long */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center p-4">
+
+    <!-- Header Section -->
+    <header class="text-center mb-8 max-w-2xl w-full pt-8">
+        <div class="inline-flex items-center justify-center p-3 bg-blue-600 rounded-full mb-4 shadow-lg text-white">
+            <i class="fa-solid fa-people-roof text-2xl"></i>
+        </div>
+        <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">Family & Relationships</h1>
+        <p class="text-gray-600 font-medium">B2 Level Vocabulary for Hungarian A-Level Matura</p>
+        <p class="text-sm text-gray-500 mt-2">Click the card or press <kbd class="bg-gray-200 px-2 rounded">Space</kbd> to flip. Use <kbd class="bg-gray-200 px-2 rounded">←</kbd> <kbd class="bg-gray-200 px-2 rounded">¯</kbd> to navigate.</p>
+    </header>
+
+    <main class="w-full max-w-lg perspective-1000 cursor-pointer no-select relative">
+        
+        <!-- The Card (Inner Wrapper for Animation) -->
+        <div id="flashcard" class="card-inner w-full h-[400px] relative transform-style-3d w-full shadow-2xl rounded-2xl">
+            
+            <!-- Front of Card (English + IPA + Sentence) -->
+            <div id="card-front" class="absolute w-full h-full backface-hidden bg-white rounded-2xl border-2 border-blue-100 flex flex-col items-center justify-center p-6 text-center hide-scrollbar overflow-y-auto">
+                <span class="absolute top-4 left-4 text-xs font-bold text-blue-500 uppercase tracking-wide bg-blue-50 px-3 py-1 rounded-full">English</span>
+                
+                <h2 id="english-text" class="text-3xl md:text-4xl font-bold text-gray-800 mb-2 drop-shadow-sm mt-4">word</h2>
+                
+                <div id="speak-btn" class="flex items-center gap-2 text-blue-600 bg-blue-50 hover:bg-blue-100 px-3 py-1 rounded-lg cursor-pointer transition-colors relative z-10 shadow-sm mb-4" title="Listen to pronunciation">
+                    <i class="fa-solid fa-volume-high"></i>
+                    <p id="ipa-text" class="text-lg md:text-xl font-medium tracking-wide no-select">/ipa/</p>
+                </div>
+                
+                <div class="w-full text-left bg-gray-50 p-4 rounded-xl shadow-inner border border-gray-100 mt-2 relative">
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="text-xs font-bold text-gray-400 uppercase tracking-wider block">Sample Sentence</span>
+                        <button id="speak-sentence-btn" class="text-blue-500 hover:text-blue-700 p-1 rounded-full hover:bg-blue-200 transition-colors z-10 relative" title="Listen to sentence">
+                            <i class="fa-solid fa-volume-high"></i>
+                        </button>
+                    </div>
+                    <p id="sentence-text" class="text-gray-700 text-sm md:text-base italic leading-relaxed">"Sample sentence here."</p>
+                </div>
+
+                <div class="absolute bottom-4 text-gray-400 text-sm flex flex-col items-center animate-pulse">
+                    <i class="fa-solid fa-arrows-rotate mb-1"></i>
+                    <span>Tap to flip</span>
+                </div>
+            </div>
+
+            <!-- Back of Card (Hungarian + Sentence Translation) -->
+            <div id="card-back" class="absolute w-full h-full backface-hidden rotate-y-180 bg-gradient-to-br from-white to-gray-50 rounded-2xl border-2 border-emerald-100 flex flex-col items-center justify-center p-6 text-center hide-scrollbar overflow-y-auto">
+                <span class="absolute top-4 right-4 text-xs font-bold text-emerald-600 uppercase tracking-wide bg-emerald-50 px-3 py-1 rounded-full">Magyar</span>
+                
+                <h2 id="hungarian-text" class="text-2xl md:text-3xl font-bold text-emerald-700 mb-6 w-full pb-4 border-b border-gray-200 mt-6">magyar jelentés</h2>
+                
+                <div class="w-full text-left bg-white p-4 rounded-xl shadow-inner border border-gray-100">
+                    <span class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 block">Példamondat fordítása</span>
+                    <p id="sentence-hu-text" class="text-gray-700 text-sm md:text-base italic leading-relaxed">"Sample sentence translation here."</p>
+                </div>
+            </div>
+            
+        </div>
+
+        <!-- Controls -->
+        <div class="flex items-center justify-between w-full mt-8">
+            <button id="prev-btn" class="flex-1 bg-white hover:bg-gray-50 text-gray-700 font-semibold py-3 px-4 rounded-l-xl shadow border-y border-l border-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 z-10">
+                <i class="fa-solid fa-arrow-left mr-2"></i> Prev
+            </button>
+            
+            <div class="flex-none bg-white text-gray-600 font-bold py-3 px-6 shadow border border-gray-200 text-sm z-10 flex flex-col items-center justify-center">
+                <span id="progress-text">1 / 32</span>
+            </div>
+            
+            <button id="next-btn" class="flex-1 bg-white hover:bg-gray-50 text-gray-700 font-semibold py-3 px-4 rounded-r-xl shadow border-y border-r border-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 z-10">
+                Next <i class="fa-solid fa-arrow-right ml-2"></i>
+            </button>
+        </div>
+
+        <!-- Utilities -->
+        <div class="flex justify-center mt-6 gap-4">
+            <button id="shuffle-btn" class="text-sm bg-indigo-100 hover:bg-indigo-200 text-indigo-700 font-semibold py-2 px-6 rounded-full transition-colors flex items-center shadow-sm">
+                <i class="fa-solid fa-shuffle mr-2"></i> Shuffle Deck
+            </button>
+        </div>
+    </main>
+
+    <script>
+        // The complete dataset containing all 5 chunks, updated with Hungarian sentences
+        const vocabularyData = [
+            // Chunk 1: Family Structures
+            { english: "nuclear family", ipa: "/ˈnjuːkliə(r) ˈfæməli/", hungarian: "szűk család (szülők és gyerekek)", sentence: "In modern Western societies, the nuclear family is still the most common household structure.", sentenceHu: "A modern nyugati társadalmakban a szűk család még mindig a leggyakoribb háztartási forma." },
+            { english: "extended family", ipa: "/ɪkˈstendɪd ˈfæməli/", hungarian: "nagycsalád / kibővített család", sentence: "Holidays are usually chaotic but fun because my whole extended family gathers at my grandparents' house.", sentenceHu: "Az ünnepek általában kaotikusak, de szórakoztatóak, mert az egész nagycsalád összegyűlik a nagyszüleim házában." },
+            { english: "blended family / stepfamily", ipa: "/ˈblendɪd ˈfæməli/ / /ˈstepfæməli/", hungarian: "mozaikcsalád", sentence: "Adjusting to life in a blended family can be challenging for children when their parents remarry.", sentenceHu: "A mozaikcsaládban való élethez való alkalmazkodás kihívást jelenthet a gyermekek számára, amikor szüleik újraházasodnak." },
+            { english: "single-parent family", ipa: "/ˌsɪŋɡl ˈpeərənt ˈfæməli/", hungarian: "egyszülős család", sentence: "Growing up in a single-parent family taught her independence and resilience from a very young age.", sentenceHu: "Az, hogy egyszülős családban nőtt fel, már egészen fiatal korától függetlenségre és kitartásra tanította." },
+            { english: "the sole breadwinner", ipa: "/ðə ˈsəʊl ˈbredwɪnə(r)/", hungarian: "az egyedüli családfenntartó", sentence: "Traditionally, the father was the sole breadwinner, but today it is much more common for both parents to work.", sentenceHu: "Hagyományosan az apa volt az egyedüli családfenntartó, de ma már sokkal gyakoribb, hogy mindkét szülő dolgozik." },
+            { english: "stay-at-home parent", ipa: "/ˌsteɪ ət ˈhəʊm ˈpeərənt/", hungarian: "háztartásbeli / otthon maradó szülő", sentence: "Being a stay-at-home parent is a demanding full-time job that is often underappreciated by society.", sentenceHu: "A háztartásbeli szülői szerep egy megerőltető, teljes munkaidős feladat, amelyet a társadalom gyakran alulértékel." },
+            
+            // Chunk 2: Resemblance and Traits
+            { english: "to take after somebody", ipa: "/tə ˈteɪk ˈɑːftə(r) ˈsʌmbədi/", hungarian: "üt valakire (belsőleg v. külsőleg)", sentence: "I take after my mother when it comes to my hot temper, but I inherited my father's musical talent.", sentenceHu: "A heves természetemet illetően az édesanyámra ütök, de apám zenei tehetségét örököltem." },
+            { english: "to be the spitting image of sb", ipa: "/tə ˈbiː ðə ˈspɪtɪŋ ˈɪmɪdʒ əv ˈsʌmbədi/", hungarian: "kiköpött mása valakinek", sentence: "Everyone says my younger brother is the spitting image of our grandfather when he was in his twenties.", sentenceHu: "Mindenki azt mondja, hogy az öcsém a kiköpött mása a nagyapánknak huszonéves korában." },
+            { english: "to run in the family", ipa: "/tə ˈrʌn ɪn ðə ˈfæməli/", hungarian: "családi vonás / öröklődik", sentence: "A talent for foreign languages seems to run in the family, as both my aunt and my cousins speak multiple languages.", sentenceHu: "Úgy tűnik, az idegen nyelvek iránti tehetség családi vonás, mivel mind a nagynéném, mind az unokatestvéreim több nyelven beszélnek." },
+            { english: "a chip off the old block", ipa: "/ə ˈtʃɪp ɒf ði ˈəʊld ˈblɒk/", hungarian: "az alma nem esik messze a fájától", sentence: "Mark decided to become an architect just like his dad; he is truly a chip off the old block.", sentenceHu: "Mark úgy döntött, hogy ő is építész lesz, mint az apja; az alma tényleg nem esett messze a fájától." },
+            { english: "the black sheep of the family", ipa: "/ðə ˈblæk ˈʃiːp əv ðə ˈfæməli/", hungarian: "a család fekete báránya", sentence: "My uncle dropped out of university to become an artist, so he has always been considered the black sheep of the family.", sentenceHu: "A nagybátyám otthagyta az egyetemet, hogy művész legyen, így mindig is őt tartották a család fekete bárányának." },
+            
+            // Chunk 3: Relationships & Conflicts
+            { english: "close-knit family", ipa: "/ˌkləʊs ˈnɪt ˈfæməli/", hungarian: "szorosan összetartó család", sentence: "We are a very close-knit family, so we always support each other emotionally and financially during difficult times.", sentenceHu: "Nagyon összetartó család vagyunk, ezért a nehéz időkben mindig támogatjuk egymást érzelmileg és anyagilag." },
+            { english: "to be on good terms with sb", ipa: "/tə ˈbiː ɒn ˈɡʊd ˈtɜːmz wɪð ˈsʌmbədi/", hungarian: "jó viszonyban van valakivel", sentence: "Despite their messy divorce, my parents have managed to remain on good terms for the sake of the children.", sentenceHu: "A csúnya válásuk ellenére a szüleimnek a gyerekek érdekében sikerült jó viszonyban maradniuk." },
+            { english: "to see eye to eye (on sth)", ipa: "/tə ˈsiː ˈaɪ tʊ ˈaɪ/", hungarian: "egyetért valamiben", sentence: "My father and I don't always see eye to eye on my career choices, but we respect each other's opinions.", sentenceHu: "Apámmal nem mindig értünk egyet a karrierválasztásomat illetően, de tiszteletben tartjuk egymás véleményét." },
+            { english: "to fall out with sb", ipa: "/tə ˈfɔːl ˈaʊt wɪð ˈsʌmbədi/", hungarian: "összeveszik valakivel", sentence: "It is quite common for rebellious teenagers to fall out with their parents over trivial things like curfews.", sentenceHu: "Elég gyakori, hogy a lázadó tinédzserek olyan apróságokon vesznek össze a szüleikkel, mint a takarodó." },
+            { english: "the generation gap", ipa: "/ðə ˌdʒenəˈreɪʃn ˈɡæp/", hungarian: "generációs szakadék", sentence: "The generation gap often leads to severe misunderstandings regarding modern technology and shifting moral values.", sentenceHu: "A generációs szakadék gyakran vezet súlyos félreértésekhez a modern technológiával és a változó erkölcsi értékekkel kapcsolatban." },
+            { english: "sibling rivalry", ipa: "/ˈsɪblɪŋ ˈraɪvlri/", hungarian: "testvérféltékenység / versengés", sentence: "There was an intense sibling rivalry between the two brothers when they were kids, but they support each other now.", sentenceHu: "Gyerekkorukban intenzív testvérféltékenység volt a két fivér között, de most már támogatják egymást." },
+            { english: "to drift apart", ipa: "/tə ˈdrɪft əˈpɑːt/", hungarian: "eltávolodnak egymástól", sentence: "After my cousins moved abroad for university, we slowly drifted apart and nowadays we only talk on birthdays.", sentenceHu: "Miután az unokatestvéreim külföldre költöztek egyetemre, lassan eltávolodtunk egymástól, és manapság már csak születésnapokon beszélünk." },
+            
+            // Chunk 4: Milestones & Aging
+            { english: "to settle down", ipa: "/tə ˈsetl ˈdaʊn/", hungarian: "megállapodik, letelepedik", sentence: "Many young adults nowadays delay settling down and starting a family until they have established a stable career.", sentenceHu: "Manapság sok fiatal felnőtt halogatja a megállapodást és a családalapítást, amíg nem alakítanak ki stabil karriert." },
+            { english: "to tie the knot", ipa: "/tə ˈtaɪ ðə ˈnɒt/", hungarian: "egybekel, összeházasodik", sentence: "After being engaged for over three years, they finally decided to tie the knot in a small, intimate ceremony.", sentenceHu: "Több mint három év jegyesség után végül úgy döntöttek, hogy egy szűk, bensőséges ceremónia keretében egybekelnek." },
+            { english: "maternity / paternity leave", ipa: "/məˈtɜːnəti/ / /pəˈtɜːnəti ˈliːv/", hungarian: "szülési / apasági szabadság (GYES/GYED)", sentence: "It is a positive shift in modern society that more fathers are choosing to take paternity leave to bond with their newborns.", sentenceHu: "Pozitív változás a modern társadalomban, hogy egyre több apa dönt úgy, hogy apasági szabadságra megy, hogy kötődjön újszülöttjéhez." },
+            { english: "to get a divorce / to separate", ipa: "/tə ˈɡet ə dɪˈvɔːs/ / /tə ˈsepəreɪt/", hungarian: "elválik / különmegy", sentence: "If a couple constantly fights and cannot resolve issues, it might be healthier for the children if they get a divorce.", sentenceHu: "Ha egy pár állandóan veszekszik, és nem tudják megoldani a problémáikat, a gyerekek számára egészségesebb lehet, ha elválnak." },
+            { english: "joint custody", ipa: "/ˌdʒɔɪnt ˈkʌstədi/", hungarian: "közös gyermekfelügyelet", sentence: "Following an amicable divorce, the judge usually grants joint custody, ensuring both parents remain actively involved.", sentenceHu: "Egy békés válást követően a bíró általában közös felügyeleti jogot ítél meg, biztosítva, hogy mindkét szülő aktívan részt vegyen a gyerek életében." },
+            { english: "an aging population", ipa: "/ən ˈeɪdʒɪŋ ˌpɒpjuˈleɪʃn/", hungarian: "elöregedő társadalom", sentence: "Due to an aging population, taking care of elderly relatives has become a major societal challenge across Europe.", sentenceHu: "Az elöregedő társadalom miatt az idős rokonok gondozása komoly társadalmi kihívássá vált Európa-szerte." },
+            { english: "nursing / retirement home", ipa: "/ˈnɜːsɪŋ ˈhəʊm/ / /rɪˈtaɪəmənt ˈhəʊm/", hungarian: "idősek otthona", sentence: "Moving a grandparent into a nursing home is an incredibly difficult emotional decision.", sentenceHu: "Egy nagyszülő idősek otthonába költöztetése hihetetlenül nehéz érzelmi döntés." },
+            
+            // Chunk 5: Parenting & Upbringing
+            { english: "to bring up / to raise", ipa: "/tə ˈbrɪŋ ˈʌp/ / /tə ˈreɪz/", hungarian: "felnevel (egy gyereket)", sentence: "She was brought up in a bilingual household, which gave her a massive advantage in her language studies.", sentenceHu: "Kétnyelvű háztartásban nőtt fel, ami hatalmas előnyt jelentett számára a nyelvtanulásban." },
+            { english: "strict / lenient", ipa: "/ˈstrɪkt/ / /ˈliːniənt/", hungarian: "szigorú / engedékeny", sentence: "While my father was exceptionally strict regarding curfews, my mother was much more lenient.", sentenceHu: "Bár apám kivételesen szigorú volt a takarodót illetően, anyám sokkal engedékenyebb volt." },
+            { english: "to set clear boundaries", ipa: "/tə ˈset ˈklɪə(r) ˈbaʊndriz/", hungarian: "egyértelmű határokat szab", sentence: "Child psychologists emphasize how crucial it is for parents to set clear boundaries to make children feel secure.", sentenceHu: "A gyermekpszichológusok hangsúlyozzák, milyen döntő fontosságú, hogy a szülők egyértelmű határokat szabjanak, hogy a gyerekek biztonságban érezzék magukat." },
+            { english: "overprotective", ipa: "/ˌəʊvəprəˈtektɪv/", hungarian: "túlféltő", sentence: "Overprotective parents often unintentionally prevent their teenagers from learning how to solve their own problems.", sentenceHu: "A túlféltő szülők gyakran akaratlanul is megakadályozzák tinédzserüket abban, hogy megtanulják, hogyan oldják meg a saját problémáikat." },
+            { english: "to spoil a child", ipa: "/tə ˈspɔɪl ə ˈtʃaɪld/", hungarian: "elkényeztet egy gyereket", sentence: "If you buy them every toy they cry for, you will inevitably spoil the child and face behavioral issues later.", sentenceHu: "Ha megveszel nekik minden játékot, amiért sírnak, elkerülhetetlenül elkényezteted a gyereket, és később viselkedési problémákkal kell szembenézned." },
+            { english: "helicopter parent", ipa: "/ˈhelɪkɒptə(r) ˈpeərənt/", hungarian: "helikopterszülő (túlzottan beavatkozó)", sentence: "The phenomenon of the helicopter parent means many young adults arrive at university lacking basic independent life skills.", sentenceHu: "A helikopterszülő jelenség azt jelenti, hogy sok fiatal felnőtt úgy érkezik az egyetemre, hogy hiányoznak az önálló élethez szükséges alapvető készségei." },
+            { english: "to instil (core) values", ipa: "/tə ɪnˈstɪl (ˈkɔː(r)) ˈvæljuːz/", hungarian: "(alap)értékeket csepegtet vkibe", sentence: "A fundamental part of upbringing is instilling core values such as empathy, resilience, and respect in the next generation.", sentenceHu: "A nevelés alapvető része az olyan alapértékek elsajátíttatása a következő generáció számára, mint az empátia, a rugalmasság és a tisztelet." }
+        ];
+
+        let currentDeck = [...vocabularyData];
+        let currentIndex = 0;
+        let isFlipped = false;
+
+        // DOM Elements
+        const flashcard = document.getElementById('flashcard');
+        const englishText = document.getElementById('english-text');
+        const ipaText = document.getElementById('ipa-text');
+        const speakBtn = document.getElementById('speak-btn');
+        
+        const sentenceText = document.getElementById('sentence-text');
+        const speakSentenceBtn = document.getElementById('speak-sentence-btn');
+        
+        const hungarianText = document.getElementById('hungarian-text');
+        const sentenceHuText = document.getElementById('sentence-hu-text');
+        
+        const progressText = document.getElementById('progress-text');
+        
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const shuffleBtn = document.getElementById('shuffle-btn');
+
+        // Initialize the app
+        function initApp() {
+            updateCard();
+        }
+
+        // Update the card UI based on current index
+        function updateCard() {
+            const cardData = currentDeck[currentIndex];
+            
+            // If card is flipped to back, flip it to front before changing content
+            if (isFlipped) {
+                flashcard.classList.remove('rotate-y-180');
+                isFlipped = false;
+                
+                // Wait for the flip animation to finish before updating text
+                setTimeout(() => {
+                    populateCardData(cardData);
+                }, 300);
+            } else {
+                populateCardData(cardData);
+            }
+            
+            updateProgress();
+        }
+
+        function populateCardData(data) {
+            englishText.textContent = data.english;
+            ipaText.textContent = data.ipa;
+            sentenceText.textContent = `"${data.sentence}"`;
+            
+            hungarianText.textContent = data.hungarian;
+            sentenceHuText.textContent = `"${data.sentenceHu}"`;
+        }
+
+        function updateProgress() {
+            progressText.textContent = `${currentIndex + 1} / ${currentDeck.length}`;
+        }
+
+        // Navigation Functions
+        function goToNext() {
+            if (currentIndex < currentDeck.length - 1) {
+                currentIndex++;
+                updateCard();
+            } else {
+                // Loop back to start
+                currentIndex = 0;
+                updateCard();
+            }
+        }
+
+        function goToPrev() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateCard();
+            } else {
+                // Loop to end
+                currentIndex = currentDeck.length - 1;
+                updateCard();
+            }
+        }
+
+        function toggleFlip() {
+            isFlipped = !isFlipped;
+            if (isFlipped) {
+                flashcard.classList.add('rotate-y-180');
+            } else {
+                flashcard.classList.remove('rotate-y-180');
+            }
+        }
+
+        function shuffleDeck() {
+            // Fisher-Yates shuffle algorithm
+            for (let i = currentDeck.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [currentDeck[i], currentDeck[j]] = [currentDeck[j], currentDeck[i]];
+            }
+            currentIndex = 0;
+            isFlipped = true; // Force unflip by setting true then calling toggle
+            toggleFlip(); 
+            setTimeout(() => {
+                updateCard();
+            }, 50);
+            
+            // Visual feedback for shuffle button
+            const icon = shuffleBtn.querySelector('i');
+            icon.classList.add('fa-spin');
+            setTimeout(() => icon.classList.remove('fa-spin'), 500);
+        }
+
+        // Text-to-Speech function
+        function speakText(text, buttonElement) {
+            if ('speechSynthesis' in window) {
+                // Cancel any currently playing speech so they don't overlap
+                window.speechSynthesis.cancel(); 
+                
+                // Replace abbreviations so the TTS engine reads them correctly
+                let spokenText = text.replace(/\bsb\b/g, 'somebody')
+                                     .replace(/\bsth\b/g, 'something');
+                
+                const utterance = new SpeechSynthesisUtterance(spokenText);
+                utterance.lang = 'en-GB'; // British English
+                utterance.rate = 0.9; // Slightly slower for clear pronunciation
+                
+                // Temporary visual feedback on the icon
+                const icon = buttonElement.querySelector('i');
+                icon.classList.remove('fa-volume-high');
+                icon.classList.add('fa-volume-up', 'animate-pulse');
+                
+                utterance.onend = () => {
+                    icon.classList.remove('fa-volume-up', 'animate-pulse');
+                    icon.classList.add('fa-volume-high');
+                };
+                
+                window.speechSynthesis.speak(utterance);
+            } else {
+                console.warn("Text-to-speech not supported in this browser.");
+            }
+        }
+
+        // Event Listeners
+        flashcard.addEventListener('click', toggleFlip);
+        
+        speakBtn.addEventListener('click', (e) => { 
+            e.stopPropagation(); 
+            speakText(currentDeck[currentIndex].english, speakBtn); 
+        });
+
+        speakSentenceBtn.addEventListener('click', (e) => { 
+            e.stopPropagation(); 
+            speakText(currentDeck[currentIndex].sentence, speakSentenceBtn); 
+        });
+
+        nextBtn.addEventListener('click', (e) => { e.stopPropagation(); goToNext(); });
+        prevBtn.addEventListener('click', (e) => { e.stopPropagation(); goToPrev(); });
+        shuffleBtn.addEventListener('click', (e) => { e.stopPropagation(); shuffleDeck(); });
+
+        // Keyboard Support for Accessibility and ease of use
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'ArrowDown') {
+                e.preventDefault(); // Prevent page scrolling
+                toggleFlip();
+            } else if (e.code === 'ArrowRight') {
+                goToNext();
+            } else if (e.code === 'ArrowLeft') {
+                goToPrev();
+            }
+        });
+
+        // Touch support for swiping
+        let touchStartX = 0;
+        let touchEndX = 0;
+        
+        flashcard.addEventListener('touchstart', e => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, {passive: true});
+
+        flashcard.addEventListener('touchend', e => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }, {passive: true});
+
+        function handleSwipe() {
+            const threshold = 50; // minimum distance to be considered a swipe
+            if (touchEndX < touchStartX - threshold) {
+                // Swiped Left - Go Next
+                goToNext();
+            }
+            if (touchEndX > touchStartX + threshold) {
+                // Swiped Right - Go Prev
+                goToPrev();
+            }
+        }
+
+        // Start the application
+        initApp();
+    </script>
+</body>
+</html>
